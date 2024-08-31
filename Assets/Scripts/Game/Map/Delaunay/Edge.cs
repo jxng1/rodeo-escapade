@@ -39,7 +39,7 @@ public class Edge
         return hCode.GetHashCode();
     }
 
-    public bool isOverlapping(Edge edge)
+    public bool IsOverlapping(Edge edge)
     {
         float uA = ((edge.point2.x - edge.point1.x) * (this.point1.y - edge.point1.y) - (edge.point2.y - edge.point1.y) * (this.point1.x - edge.point1.x)) / ((edge.point2.y - edge.point1.y) * (this.point2.x - this.point1.x) - (edge.point2.x - edge.point1.x) * (this.point2.y - this.point1.y));
         float uB = ((this.point2.x - this.point1.x) * (this.point1.y - edge.point1.y) - (this.point2.y - this.point1.y) * (this.point1.x - edge.point1.x)) / ((edge.point2.y - edge.point1.y) * (this.point2.x - this.point1.x) - (edge.point2.x - edge.point1.x) * (this.point2.y - this.point1.y));

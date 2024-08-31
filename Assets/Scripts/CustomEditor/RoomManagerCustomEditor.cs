@@ -98,53 +98,53 @@ public class RoomManagerCustomGUI : Editor
         EditorGUILayout.Space();
         if (GUILayout.Button("Generate Rooms"))
         {
-            script.generateRooms();
+            script.GenerateRooms();
             //Debug.Log(script.roomsNotEmpty().ToString());
         }
         else if (GUILayout.Button("Clear Map"))
         {
-            script.clearMap();
+            script.ClearMap();
         }
         EditorGUILayout.Space();
-        if (GUILayout.Button("Separate Rooms") && script.roomsNotEmpty())
+        if (GUILayout.Button("Separate Rooms") && script.RoomsNotEmpty())
         {
             //Debug.Log("Separating rooms...");
-            script.separateRooms();
+            script.SeparateRooms();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Delaunay Triangulation"))
         {
-            script.triangulate();
+            script.Triangulate();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Generate Super Triangle"))
         {
-            script.generateSuperTriangle();
+            script.GenerateSuperTriangle();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Graphify"))
         {
-            script.graphify();
+            script.Graphify();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Prim's Spanning Tree"))
         {
-            script.spanningTree();
+            script.SpanningTree();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Path Splitter"))
         {
-            script.generateLinearPaths();
+            script.GenerateLinearPaths();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Add rooms on the path"))
         {
-            script.addNormalRoomsToMap();
+            script.AddNormalRoomsToMap();
         }
         EditorGUILayout.Space();
         if (GUILayout.Button("Tile rooms"))
         {
-            script.tileRooms();
+            script.TileRooms();
         }
     }
 }

@@ -36,12 +36,12 @@ public class Room
         this.floorTile = floorTile;
     }
 
-    public void straighten()
+    public void Straighten()
     {
         center = new Vector2(Mathf.Round(center.x), Mathf.Round(center.y));
     }
 
-    public void spawn(Tilemap map, Tile tile)
+    public void Spawn(Tilemap map, Tile tile)
     {
         for (float x = center.x - length / 2; x < center.x + length / 2; x++)
         {
@@ -74,7 +74,7 @@ public class Room
         }
     }
 
-    public bool isOverlapping(Room room, int adjustment)
+    public bool IsOverlapping(Room room, int adjustment)
     {
         return this.center.x + this.length / 2 + (adjustment / 2) >= room.center.x - room.length / 2 // xmax1 >= xmin2
         && room.center.x + room.length / 2 >= this.center.x - this.length / 2 - (adjustment / 2)// xmax2 >= xmin2
@@ -82,7 +82,7 @@ public class Room
         && room.center.y + room.width / 2 >= this.center.y - this.width / 2 - (adjustment / 2); // ymax2 >= ymin2
     }
 
-    public bool isOverlapping(Edge edge)
+    public bool IsOverlapping(Edge edge)
     {
         /*
           center.x-length/2, center.y+width/2 -> ----- <- center.x+length/2, center.y+width/2
@@ -93,16 +93,16 @@ public class Room
           Credit to Jeffrey Thompson: http://jeffreythompson.org/collision-detection/line-rect.php
         */
 
-        bool left = edge.isOverlapping(new Edge(new Point(this.center.x - length / 2, this.center.y + width / 2)
+        bool left = edge.IsOverlapping(new Edge(new Point(this.center.x - length / 2, this.center.y + width / 2)
         , new Point(this.center.x - length / 2, this.center.y - width / 2))); // left edge of a rectangle
 
-        bool right = edge.isOverlapping(new Edge(new Point(center.x + length / 2, center.y + width / 2)
+        bool right = edge.IsOverlapping(new Edge(new Point(center.x + length / 2, center.y + width / 2)
         , new Point(center.x + length / 2, center.y - width / 2))); // right edge of a rectangle
 
-        bool top = edge.isOverlapping(new Edge(new Point(center.x - length / 2, center.y + width / 2)
+        bool top = edge.IsOverlapping(new Edge(new Point(center.x - length / 2, center.y + width / 2)
         , new Point(center.x + length / 2, center.y + width / 2)));
 
-        bool bottom = edge.isOverlapping(new Edge(new Point(center.x - length / 2, center.y - width / 2)
+        bool bottom = edge.IsOverlapping(new Edge(new Point(center.x - length / 2, center.y - width / 2)
         , new Point(center.x + length / 2, center.y - width / 2)));
 
         if (left || right || top || bottom)
@@ -113,7 +113,7 @@ public class Room
         return false;
     }
 
-    public bool isOverlapping(Point point, int adjustment)
+    public bool IsOverlapping(Point point, int adjustment)
     {
         return this.center.x + this.length / 2 + (adjustment / 2) >= point.x
         && this.center.x - this.length / 2 - (adjustment / 2) <= point.x

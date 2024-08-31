@@ -11,17 +11,17 @@ namespace Delaunator
 
         private IEnumerable<Triangle> border;
 
-        public IEnumerable<Triangle> bowyerWatson(IEnumerable<Point> points)
+        public IEnumerable<Triangle> BowyerWatson(IEnumerable<Point> points)
         {
             var triangulation = new HashSet<Triangle>();
-            Triangle superTriangle = generateSuperTriangle(points);
+            Triangle superTriangle = GenerateSuperTriangle(points);
 
             triangulation.Add(superTriangle);
 
             foreach (Point point in points)
             {
-                var badTriangles = findBadTriangles(point, triangulation);
-                var polygon = findHoleBoundaries(badTriangles);
+                var badTriangles = FindBadTriangles(point, triangulation);
+                var polygon = FindHoleBoundaries(badTriangles);
 
                 foreach (Triangle triangle in badTriangles)
                 {
@@ -43,7 +43,7 @@ namespace Delaunator
             return triangulation;
         }
 
-        private List<Edge> findHoleBoundaries(ISet<Triangle> badTriangles)
+        private List<Edge> FindHoleBoundaries(ISet<Triangle> badTriangles)
         {
             var edges = new List<Edge>();
 
@@ -60,14 +60,14 @@ namespace Delaunator
             return boundaryEdges.ToList();
         }
 
-        private ISet<Triangle> findBadTriangles(Point point, HashSet<Triangle> triangles)
+        private ISet<Triangle> FindBadTriangles(Point point, HashSet<Triangle> triangles)
         {
-            var badTriangles = triangles.Where(triangle => triangle.isPointInsideCircumcircle(point));
+            var badTriangles = triangles.Where(triangle => triangle.IsPointInsideCircumcircle(point));
 
             return new HashSet<Triangle>(badTriangles);
         }
 
-        public Triangle generateSuperTriangle(IEnumerable<Point> points)
+        public Triangle GenerateSuperTriangle(IEnumerable<Point> points)
         {
             Point point1 = new Point(2 * maxX, -maxY);
             Point point2 = new Point(0, 2 * maxY);
@@ -77,7 +77,7 @@ namespace Delaunator
         }
 
 
-        public IEnumerable<Point> turnCentersToPoints(List<Room> rooms, int maxX, int maxY)
+        public IEnumerable<Point> TurnCentersToPoints(List<Room> rooms, int maxX, int maxY)
         {
             this.maxX = maxX;
             this.maxY = maxY;

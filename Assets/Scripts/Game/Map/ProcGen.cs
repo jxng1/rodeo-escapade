@@ -60,40 +60,40 @@ public class RoomManager : Singleton<RoomManager>
 
     private void Update()
     {
-        if (rooms.Count > 0 && roomsHaveOverlap())
+        if (rooms.Count > 0 && RoomsHaveOverlap())
         {
-            separateRooms();
+            SeparateRooms();
             if (keyRooms.Count >= 3) // TODO: make this dynamic
             {
-                triangulate();
+                Triangulate();
             }
         }
     }
 
-    public void generateRooms()
+    public void GenerateRooms()
     {
         center = transform.position;
 
         int numOfRooms = Random.Range(minRoomSize, maxRoomSize + 1);
 
-        // Generate rooms
+        // generate rooms
         for (int i = 0; i < numOfRooms; i++)
         {
             int length = Random.Range(minRoomLength, maxRoomLength + 1);
             int width = Random.Range(minRoomWidth, maxRoomWidth + 1);
-            Vector2 randomCenter = getRandomPointInCircle(tileMapSizeLength / 4);
+            Vector2 randomCenter = GetRandomPointInCircle(tileMapSizeLength / 4);
 
             Room newRoom = new Room(i, (int)randomCenter.x, (int)randomCenter.y, length, width, floorTile, wallTile);
             rooms.Add(newRoom);
         }
 
-        identifyKeyRooms();
+        IdentifyKeyRooms();
     }
 
-    public void clearMap()
+    public void ClearMap()
     {
         // reset tilemap size
-        // TODO: read from config/system
+        // TODO: reset from config/system
         tileMapSizeLength = 500;
         tileMapSizeWidth = 500;
 
@@ -124,7 +124,7 @@ public class RoomManager : Singleton<RoomManager>
         finalRooms.Clear();
     }
 
-    private Vector2 getRandomPointInCircle(int radius)
+    private Vector2 GetRandomPointInCircle(int radius)
     {
         float t = 2 * Mathf.PI * Random.Range(0f, 1f);
         float u = Random.Range(0f, 1f) + Random.Range(0f, 1f);
@@ -139,20 +139,20 @@ public class RoomManager : Singleton<RoomManager>
             r = u;
         }
 
-        return new Vector2(roundm(radius * r * Mathf.Cos(t), 16), roundm(radius * r * Mathf.Sin(t), 16));
+        return new Vector2(RoundM(radius * r * Mathf.Cos(t), 16), RoundM(radius * r * Mathf.Sin(t), 16));
     }
 
-    private int roundm(float n, int size)
+    private int RoundM(float n, int size)
     {
         return Mathf.FloorToInt(((n + size - 1) / size)) * size;
     }
 
-    public bool roomsNotEmpty()
+    public bool RoomsNotEmpty()
     {
         return rooms.Count > 0;
     }
 
-    public bool roomsHaveOverlap()
+    public bool RoomsHaveOverlap()
     {
         foreach (Room roomA in rooms)
         {
@@ -163,7 +163,7 @@ public class RoomManager : Singleton<RoomManager>
                     continue;
                 }
 
-                if (roomA.isOverlapping(roomB, separationAdjustment))
+                if (roomA.IsOverlapping(roomB, separationAdjustment))
                 {
                     return true;
                 }
@@ -173,7 +173,7 @@ public class RoomManager : Singleton<RoomManager>
         return false;
     }
 
-    public void separateRooms()
+    public void SeparateRooms()
     {
         int sumArea = 0;
 
@@ -196,7 +196,7 @@ public class RoomManager : Singleton<RoomManager>
                     continue;
                 }
 
-                if (!agent.isOverlapping(room, separationAdjustment))
+                if (!agent.IsOverlapping(room, separationAdjustment))
                 {
                     continue;
                 }
@@ -266,36 +266,36 @@ public class RoomManager : Singleton<RoomManager>
         }
     }
 
-    public void identifyKeyRooms()
+    public void IdentifyKeyRooms()
     {
         keyRooms.Clear();
         rooms.ForEach(room => room.roomType = RoomType.Normal); // reset all rooms to normal
 
-        int keyRoomAreaCutoff = Mathf.RoundToInt(findAverageAreaOfRoom() * 1.4f); // 1.4x area of rooms greater than average room area will be key rooms.
+        int keyRoomAreaCutoff = Mathf.RoundToInt(FindAverageAreaOfRoom() * 1.4f); // 1.4x area of rooms greater than average room area will be key rooms.
 
         keyRooms = rooms.FindAll(room => room.area >= keyRoomAreaCutoff);
         keyRooms.ForEach(room => room.roomType = RoomType.Key);
     }
 
-    public void triangulate()
+    public void Triangulate()
     {
-        points = delaunator.turnCentersToPoints(keyRooms, tileMapSizeLength, tileMapSizeWidth);
-        generateSuperTriangle();
-        triangulation = delaunator.bowyerWatson(points);
-        updateEdges();
+        points = delaunator.TurnCentersToPoints(keyRooms, tileMapSizeLength, tileMapSizeWidth);
+        GenerateSuperTriangle();
+        triangulation = delaunator.BowyerWatson(points);
+        UpdateEdges();
     }
 
-    public void generateSuperTriangle() // for visualisation
+    public void GenerateSuperTriangle() // for visualisation
     {
         superTEdges.Clear();
-        sTriangle = delaunator.generateSuperTriangle(points);
+        sTriangle = delaunator.GenerateSuperTriangle(points);
 
         superTEdges.Add(new Edge(sTriangle.vertices[0], sTriangle.vertices[1]));
         superTEdges.Add(new Edge(sTriangle.vertices[1], sTriangle.vertices[2]));
         superTEdges.Add(new Edge(sTriangle.vertices[2], sTriangle.vertices[0]));
     }
 
-    public void updateEdges()
+    public void UpdateEdges()
     {
         List<Edge> updatedEdges = new List<Edge>();
         foreach (Triangle triangle in triangulation)
@@ -308,7 +308,7 @@ public class RoomManager : Singleton<RoomManager>
         edges = updatedEdges;
     }
 
-    private int findAverageAreaOfRoom()
+    private int FindAverageAreaOfRoom()
     {
         int sum = 0;
         rooms.ForEach(room => sum += room.area);
@@ -316,14 +316,14 @@ public class RoomManager : Singleton<RoomManager>
         return sum / rooms.Count;
     }
 
-    public void graphify()
+    public void Graphify()
     {
         //rooms.ForEach(room => Debug.Log("BEFORE: Room center: " + room.center.x + "," + room.center.y));
 
         // rooms.ForEach(room => room.straighten());
         // keyRooms.ForEach(room => room.straighten());
 
-        triangulate();
+        Triangulate();
         rooms.ForEach(room => Debug.Log("AFTER: Room center: " + room.center.x + "," + room.center.y));
         this.graph = new Graph<Point>(keyRooms.Count);
         int currId = 1;
@@ -336,7 +336,7 @@ public class RoomManager : Singleton<RoomManager>
 
             if (nodeA == null)
             {
-                nodeA = graph.addNode(currId, edge.point1);
+                nodeA = graph.AddNode(currId, edge.point1);
                 //Debug.Log("Adding node with id: " + currId);
 
                 currId++;
@@ -344,16 +344,16 @@ public class RoomManager : Singleton<RoomManager>
 
             if (nodeB == null)
             {
-                nodeB = graph.addNode(currId, edge.point2);
+                nodeB = graph.AddNode(currId, edge.point2);
                 //Debug.Log("Adding node with id: " + currId);
 
                 currId++;
             }
 
-            float edgeCost = calculateEdgeCost(nodeA, nodeB);
+            float edgeCost = CalculateEdgeCost(nodeA, nodeB);
             if (edgeCost > 0)
             {
-                graph.addUndirectedEdge(nodeA.id, nodeB.id, edgeCost);
+                graph.AddUndirectedEdge(nodeA.id, nodeB.id, edgeCost);
             }
             Debug.Log("Node A has center: " + nodeA.data.x + "," + nodeA.data.y);
             Debug.Log("Node B has center: " + nodeB.data.x + "," + nodeB.data.y);
@@ -365,11 +365,11 @@ public class RoomManager : Singleton<RoomManager>
         //graph.printDebugGraph();
     }
 
-    public void spanningTree()
+    public void SpanningTree()
     {
         //Debug.Log("----------Spanning Tree----------");
         treeEdges.Clear();
-        tree = graph.primSpanningTree();
+        tree = graph.PrimSpanningTree();
 
         Dictionary<Node<Point>, List<Node<Point>>> map = new Dictionary<Node<Point>, List<Node<Point>>>(); // from -> to(which can have many) e.g. node 1 to 2, 3, 4
 
@@ -447,7 +447,7 @@ public class RoomManager : Singleton<RoomManager>
         }
     }
 
-    public float calculateEdgeCost(Node<Point> nodeA, Node<Point> nodeB)
+    public float CalculateEdgeCost(Node<Point> nodeA, Node<Point> nodeB)
     {
         if (nodeA == null || nodeB == null)
         {
@@ -461,7 +461,7 @@ public class RoomManager : Singleton<RoomManager>
         return Mathf.Sqrt(a + b);
     }
 
-    public List<Edge> generateLinearPaths()
+    public List<Edge> GenerateLinearPaths()
     {
         linePath = null;
         /* foreach edge in treeEdges:
@@ -477,12 +477,12 @@ public class RoomManager : Singleton<RoomManager>
         {
             //Debug.Log("Edge Point 1 Coords: " + edge.point1.x + "," + edge.point1.y);
             // Debug.Log("Edge Point 2 Coords: " + edge.point2.x + "," + edge.point2.y);
-            if (isWithinBounds(new Point(edge.point2.x, edge.point1.y), edge.point2)) // y positions are similar - horizontal line
+            if (IsWithinBounds(new Point(edge.point2.x, edge.point1.y), edge.point2)) // y positions are similar - horizontal line
             {
                 Debug.Log("Edges are close on y axis.");
                 linearPath.Add(new Edge(edge.point1, new Point(edge.point2.x, edge.point1.y)));
             }
-            else if (isWithinBounds(new Point(edge.point1.x, edge.point2.y), edge.point2)) // x positions are similar - vertical line
+            else if (IsWithinBounds(new Point(edge.point1.x, edge.point2.y), edge.point2)) // x positions are similar - vertical line
             {
                 Debug.Log("Edges are close on x axis.");
                 linearPath.Add(new Edge(edge.point1, new Point(edge.point1.x, edge.point2.y)));
@@ -514,7 +514,7 @@ public class RoomManager : Singleton<RoomManager>
         return linearPath;
     }
 
-    public bool isWithinBounds(Point pointA, Point pointB)
+    public bool IsWithinBounds(Point pointA, Point pointB)
     {
         rooms.ForEach(room => Debug.Log("Room center: " + room.center.x + "," + room.center.y));
         Debug.Log("Point center: " + pointB.x + "," + pointB.y);
@@ -531,7 +531,7 @@ public class RoomManager : Singleton<RoomManager>
         && room.center.y - room.width / 2 <= pointA.y;
     }
 
-    public void addNormalRoomsToMap()
+    public void AddNormalRoomsToMap()
     {
         finalRooms.Clear();
         // foreach normal room, if they intersect with said linear path, then add to them final map
@@ -544,7 +544,7 @@ public class RoomManager : Singleton<RoomManager>
 
             foreach (Edge edge in linePath)
             {
-                if (room.isOverlapping(edge))
+                if (room.IsOverlapping(edge))
                 {
                     finalRooms.Add(room);
                     Debug.Log("Total of: " + finalRooms.Count + " rooms.");
@@ -553,12 +553,12 @@ public class RoomManager : Singleton<RoomManager>
         }
     }
 
-    public void tileRooms()
+    public void TileRooms()
     {
         map.ClearAllTiles();
         foreach (Room room in finalRooms)
         {
-            room.spawn(map, floorTile);
+            room.Spawn(map, floorTile);
         }
     }
 
@@ -696,7 +696,7 @@ public class RoomManager : Singleton<RoomManager>
         }
     }
 
-    static void drawString(string text, Vector3 worldPos, Color? colour = null)
+    static void DrawString(string text, Vector3 worldPos, Color? colour = null)
     {
         UnityEditor.Handles.BeginGUI();
         if (colour.HasValue) GUI.color = colour.Value;

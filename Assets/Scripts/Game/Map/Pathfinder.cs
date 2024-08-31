@@ -31,14 +31,14 @@ namespace Pathfinder
             }
         }
 
-        public void addNeighbour(Node<T> neighbour)
+        public void AddNeighbour(Node<T> neighbour)
         {
             if (!neighbours.Contains(neighbour))
             {
                 neighbours.Add(neighbour);
             }
         }
-        public void removeNeighbour(Node<T> neighbour)
+        public void RemoveNeighbour(Node<T> neighbour)
         {
             if (neighbours.Contains(neighbour))
             {
@@ -63,15 +63,15 @@ namespace Pathfinder
             nodes = new List<Node<T>>();
             this.graphSize = graphSize;
 
-            createGraph();
+            CreateGraph();
         }
 
-        private void createGraph()
+        private void CreateGraph()
         {
             adjMatrix = new float[graphSize + 1, graphSize + 1];
         }
 
-        public Node<T> addNode(int id, T data)
+        public Node<T> AddNode(int id, T data)
         {
             Node<T> newNode = new Node<T>(id, data);
 
@@ -80,31 +80,31 @@ namespace Pathfinder
             return newNode;
         }
 
-        public void addUndirectedEdge(int nodeA, int nodeB, float cost)
+        public void AddUndirectedEdge(int nodeA, int nodeB, float cost)
         {
             if (nodeA > 0 && nodeB > 0 && nodeA <= graphSize && nodeB <= graphSize)
             {
                 adjMatrix[nodeA, nodeB] = cost;
                 adjMatrix[nodeB, nodeA] = cost;
 
-                nodes.Find(node => node.id == nodeA).addNeighbour(nodes.Find(node => node.id == nodeB));
-                nodes.Find(node => node.id == nodeB).addNeighbour(nodes.Find(node => node.id == nodeA));
+                nodes.Find(node => node.id == nodeA).AddNeighbour(nodes.Find(node => node.id == nodeB));
+                nodes.Find(node => node.id == nodeB).AddNeighbour(nodes.Find(node => node.id == nodeA));
             }
         }
 
-        public void removeUndirectedEdge(int nodeA, int nodeB)
+        public void RemoveUndirectedEdge(int nodeA, int nodeB)
         {
             if (nodeA > 0 && nodeB > 0 && nodeA <= graphSize && nodeB <= graphSize)
             {
                 adjMatrix[nodeA, nodeB] = 0;
                 adjMatrix[nodeB, nodeA] = 0;
 
-                nodes.Find(node => node.id == nodeA).removeNeighbour(nodes.Find(node => node.id == nodeB));
-                nodes.Find(node => node.id == nodeB).removeNeighbour(nodes.Find(node => node.id == nodeA));
+                nodes.Find(node => node.id == nodeA).RemoveNeighbour(nodes.Find(node => node.id == nodeB));
+                nodes.Find(node => node.id == nodeB).RemoveNeighbour(nodes.Find(node => node.id == nodeA));
             }
         }
 
-        public void printDebugGraph()
+        public void PrintDebugGraph()
         {
             for (int i = 0; i < graphSize + 1; i++)
             {
@@ -115,17 +115,17 @@ namespace Pathfinder
             }
         }
 
-        public bool isConnected(int nodeA, int nodeB)
+        public bool IsConnected(int nodeA, int nodeB)
         {
-            return getPathCost(nodeA, nodeB) + getPathCost(nodeB, nodeA) > 0;
+            return GetPathCost(nodeA, nodeB) + GetPathCost(nodeB, nodeA) > 0;
         }
 
-        public float getPathCost(int nodeA, int nodeB)
+        public float GetPathCost(int nodeA, int nodeB)
         {
             return adjMatrix[nodeA, nodeB];
         }
 
-        public List<Node<T>> primSpanningTree()
+        public List<Node<T>> PrimSpanningTree()
         {
             if (graphSize < 1)
             {
@@ -165,7 +165,7 @@ namespace Pathfinder
                             pathCost = adjMatrix[curr.id, neighbour.id];
                             potential = neighbour;
                         }
-                        //this.printDebugGraph();
+                        //this.PrintDebugGraph();
                     }
                 }
 
