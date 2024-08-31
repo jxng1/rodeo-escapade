@@ -37,12 +37,12 @@ public class RoomManager : Singleton<RoomManager>
     private Delaunay delaunator = new Delaunay();
     private IEnumerable<Point> points;
     private IEnumerable<Triangle> triangulation;
-    private List<Edge> edges;
+    private List<Edge> edges = new List<Edge>();
     public int separationAdjustment = 2;
 
     // graph
     private Graph<Point> graph;
-    private List<Node<Point>> tree;
+    private List<Node<Point>> tree = new List<Node<Point>>();
     private List<Edge> treeEdges = new List<Edge>();
 
     // linear path
@@ -63,7 +63,7 @@ public class RoomManager : Singleton<RoomManager>
         if (rooms.Count > 0 && roomsHaveOverlap())
         {
             separateRooms();
-            if (keyRooms.Count >= 3)
+            if (keyRooms.Count >= 3) // TODO: make this dynamic
             {
                 triangulate();
             }
@@ -90,27 +90,38 @@ public class RoomManager : Singleton<RoomManager>
         identifyKeyRooms();
     }
 
-    public void clearMap() // doesn't work properly as of now, it should reinstantiate, not set to null
+    public void clearMap()
     {
+        // reset tilemap size
+        // TODO: read from config/system
+        tileMapSizeLength = 500;
+        tileMapSizeWidth = 500;
+
         // clear existing tiles off map
         map.ClearAllTiles();
 
         // clear rooms
-        rooms = null;
-        keyRooms = null;
+        rooms.Clear();
+        keyRooms.Clear();
 
         // clear triangulation
         triangulation = null;
-        edges = null;
+        edges.Clear();
         points = null;
 
         // clear super triangle
         sTriangle = null;
-        superTEdges = null;
+        superTEdges.Clear();
 
         // clear pathfinding
         graph = null;
         tree = null;
+
+        // clear line path
+        linePath.Clear();
+
+        // clear final rooms
+        finalRooms.Clear();
     }
 
     private Vector2 getRandomPointInCircle(int radius)
@@ -342,7 +353,7 @@ public class RoomManager : Singleton<RoomManager>
             float edgeCost = calculateEdgeCost(nodeA, nodeB);
             if (edgeCost > 0)
             {
-                graph.  addUndirectedEdge(nodeA.id, nodeB.id, edgeCost);
+                graph.addUndirectedEdge(nodeA.id, nodeB.id, edgeCost);
             }
             Debug.Log("Node A has center: " + nodeA.data.x + "," + nodeA.data.y);
             Debug.Log("Node B has center: " + nodeB.data.x + "," + nodeB.data.y);
